@@ -1,10 +1,10 @@
 export interface Database<T> {
-    fileName: string;
+    filePath: string;
     data: T[];
 }
 export declare class NoSQLDatabase<T> {
     private database;
-    constructor(fileName: string);
+    constructor(filePath: string);
     private loadDatabase;
     private saveDatabase;
     private generateId;

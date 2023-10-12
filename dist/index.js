@@ -5,17 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NoSQLDatabase = void 0;
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 class NoSQLDatabase {
-    constructor(fileName) {
+    constructor(filePath) {
         this.database = {
-            fileName,
+            filePath,
             data: [],
         };
         this.loadDatabase();
     }
     loadDatabase() {
         try {
-            const data = fs_1.default.readFileSync(this.database.fileName, "utf8");
+            const data = fs_1.default.readFileSync(this.database.filePath, "utf8");
             this.database.data = JSON.parse(data);
         }
         catch (error) {
@@ -23,7 +24,7 @@ class NoSQLDatabase {
         }
     }
     saveDatabase() {
-        fs_1.default.writeFileSync(this.database.fileName, JSON.stringify(this.database.data, null, 2));
+        fs_1.default.writeFileSync(path_1.default.resolve(this.database.filePath), JSON.stringify(this.database.data, null, 2));
     }
     generateId() {
         return Math.random().toString(36).substr(2, 9);
