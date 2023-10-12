@@ -1,16 +1,16 @@
 import fs from "fs";
-
+import path from "path";
 export interface Database<T> {
-  fileName: string;
+  filePath: string;
   data: T[];
 }
 
 export class NoSQLDatabase<T> {
   private database: Database<T>;
 
-  public constructor(fileName: string) {
+  public constructor(filePath: string) {
     this.database = {
-      fileName,
+      filePath,
       data: [],
     };
     this.loadDatabase();
@@ -18,7 +18,7 @@ export class NoSQLDatabase<T> {
 
   private loadDatabase(): void {
     try {
-      const data: string = fs.readFileSync(this.database.fileName, "utf8");
+      const data: string = fs.readFileSync(this.database.filePath, "utf8");
       this.database.data = JSON.parse(data);
     } catch (error) {
       console.error(error);
@@ -27,7 +27,7 @@ export class NoSQLDatabase<T> {
 
   private saveDatabase(): void {
     fs.writeFileSync(
-      this.database.fileName,
+      path.resolve(this.database.filePath),
       JSON.stringify(this.database.data, null, 2)
     );
   }
