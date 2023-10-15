@@ -94,10 +94,21 @@ export class NoSQLDatabase<T> {
     );
 
     if (index !== -1) {
-      const updatedItem: T = { ...this.database.data[index], ...data };
-      this.database.data[index] = updatedItem;
-      this.saveDatabase();
-      return updatedItem;
+      const keys = this.findKeys(data);
+      for (let key of keys) {
+        console.log(keys)
+        const updatedItem = this.updateValueByPath(
+          this.database.data[index],
+          key,
+          this.getValueByPath(data, key)
+        );
+        // const updatedItem: T = { ...this.database.data[index], ...data };
+        this.database.data[index] = updatedItem;
+        // console.log("Database index: ", this.database.data[index]);
+        // console.log("Data: ", data);
+        this.saveDatabase(); 
+      }
+      return this.database.data[index];
     }
 
     return null;
@@ -143,5 +154,55 @@ export class NoSQLDatabase<T> {
     this.database.data.push(newItem);
     this.saveDatabase();
     return newItem;
+  }
+
+  private findKeys(data: any, path = ""): string[] {
+    const keys: string[] = [];
+
+    for (const key in data) {
+      const currentPath = path ? `${path}.${key}` : key;
+
+      if (typeof data[key] === "object") {
+        const subKeys = this.findKeys(data[key], currentPath);
+        keys.push(...subKeys);
+      } else {
+        keys.push(currentPath);
+      }
+    }
+
+    return keys;
+  }
+
+  private getValueByPath(data: any, path: string): any {
+    const keys = path.split(".");
+    let value = data;
+
+    for (const key of keys) {
+      if (value && typeof value === "object" && key in value) {
+        value = value[key];
+      } else {
+        return undefined; // Se a chave não existe ou o valor não é um objeto, retorna undefined
+      }
+    }
+
+    return value;
+  }
+  private updateValueByPath(data: any, path: string, value: any): any {
+    const segments = path.split(".");
+    let current = data;
+
+    for (let i = 0; i < segments.length - 1; i++) {
+      const segment = segments[i];
+
+      if (!current[segment]) {
+        current[segment] = {};
+      }
+
+      current = current[segment];
+    }
+
+    current[segments[segments.length - 1]] = value;
+
+    return data;
   }
 }
