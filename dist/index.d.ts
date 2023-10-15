@@ -59,5 +59,8 @@ export declare class NoSQLDatabase<T> {
     create({ create }: {
         create: T;
     }): T;
+    private findKeys;
+    private getValueByPath;
+    private updateValueByPath;
 }
 //# sourceMappingURL=index.d.ts.map

@@ -96,17 +96,13 @@ export class NoSQLDatabase<T> {
     if (index !== -1) {
       const keys = this.findKeys(data);
       for (let key of keys) {
-        console.log(keys)
         const updatedItem = this.updateValueByPath(
           this.database.data[index],
           key,
           this.getValueByPath(data, key)
         );
-        // const updatedItem: T = { ...this.database.data[index], ...data };
         this.database.data[index] = updatedItem;
-        // console.log("Database index: ", this.database.data[index]);
-        // console.log("Data: ", data);
-        this.saveDatabase(); 
+        this.saveDatabase();
       }
       return this.database.data[index];
     }
